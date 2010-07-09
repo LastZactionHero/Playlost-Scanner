@@ -7,10 +7,11 @@ import java.util.*;
  */
 public class PlaylostScanner extends Thread {
 	
-	Vector<OutputItem> output_list = new Vector<OutputItem>(); // Output list of songs
-	String mPath = ""; // Base path
-	String mOutput = ""; // Output display text
-	boolean mKill = false; // Stop scan flag
+	private Vector<OutputItem> output_list = new Vector<OutputItem>(); // Output list of songs
+	private String mPath = ""; // Base path
+	private String mOutput = ""; // Output display text
+	private boolean mKill = false; // Stop scan flag
+	private boolean mFinished = false; // Scan complete flag
 	
 	/*
 	 * Constructor
@@ -28,6 +29,7 @@ public class PlaylostScanner extends Thread {
 	public void run()
 	{
 		mKill = false;
+		mFinished = false;
 		scanLibrary();	
 	}
 	
@@ -47,7 +49,8 @@ public class PlaylostScanner extends Thread {
 		
 		// Write output to javascript file
 		writeOutput();
-		mOutput = "Scan Complete!\n" + mOutput;
+		mOutput = "**Scan Complete!**\nClose this program and open \"Playlost Viewer\" in your browser.\n\n" + mOutput;
+		
 	}
 	
 	
@@ -162,5 +165,19 @@ public class PlaylostScanner extends Thread {
 		}
 	}
 	
-	
+	/*
+	 * Get if scanning is finished
+	 */
+	boolean getIsFinished()
+	{
+		return mFinished;
+	}
+
+	/*
+	 * Get Output Text
+	 */
+	String getOutputText()
+	{
+		return mOutput;
+	}
 }

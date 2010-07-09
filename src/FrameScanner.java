@@ -5,28 +5,39 @@ public class FrameScanner extends JFrame implements ActionListener{
 	
 	private static final long serialVersionUID = 7526472295622776147L;
 
+	// UI Elements
 	static FrameScanner jThisFrame = null;
-	JButton 	jButtonScan = null;
-	JTextField 	jFieldDir = null;
-	JButton		jButtonChoose = null;
-	JTextArea	jTextScan = null;
-	String		mStringDir = null;
-	PlaylostScanner mScanner = null;
-	JButton		jButtonStop = null;
-	Timer		updateTimer = null;
-
+	private JButton jButtonScan = null;
+	private JTextField jFieldDir = null;
+	private JButton	jButtonChoose = null;
+	private JTextArea jTextScan = null;
+	private JButton	jButtonStop = null;
+	private Timer updateTimer = null;
 	
+	// Scanning
+	private String mStringDir = null;
+	private PlaylostScanner mScanner = null;
+	
+	
+	/*
+	 * Program main
+	 */
 	public static void main(String[] args)	
 	{
 		jThisFrame = new FrameScanner();
 	}
 	
+	/*
+	 * Constructor
+	 */
 	FrameScanner()
 	{
 		setLayout( null );
+		setResizable( false );
 		
 		setTitle( "Playlost Library Scanner" );
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setLocation( 100, 100 );
 		
 		jFieldDir = new JTextField();
 		jFieldDir.setText( "Path to Music Directory" );
@@ -59,8 +70,14 @@ public class FrameScanner extends JFrame implements ActionListener{
 		
 		setSize( 450, 315 );
 		setVisible( true );
+		
+		setUIActivityState( false );
 	}
 	
+	/*
+	 * Event Handler (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	public void actionPerformed(ActionEvent e)
 	{
 		if( "button_choose".equals( e.getActionCommand() ) )
@@ -77,19 +94,11 @@ public class FrameScanner extends JFrame implements ActionListener{
 			}
 		}
 		else if( "button_scan".equals( e.getActionCommand() ) )
-		{
-			jButtonScan.setEnabled( false );
-			jFieldDir.setEnabled( false );
-			jButtonChoose.setEnabled( false );
-			jButtonStop.setEnabled( true );
+		{	
+			setUIActivityState( true );
 			
 			mScanner = new PlaylostScanner( mStringDir );
 			mScanner.start();
-			
-			//updateTimer = new Timer( 1000, this );
-			//updateTimer.setInitialDelay( 1000 );
-			//updateTimer.setActionCommand( "timer_update" );
-			//updateTimer.start();
 			
 			updateTimer = new javax.swing.Timer( 1000, new ActionListener() {
 		          public void actionPerformed(ActionEvent e) {
@@ -102,23 +111,49 @@ public class FrameScanner extends JFrame implements ActionListener{
 		}
 		else if( "button_stop".equals( e.getActionCommand() ) )
 		{
-			jButtonScan.setEnabled( true );
-			jFieldDir.setEnabled( true );
-			jButtonChoose.setEnabled( true );
-			jButtonStop.setEnabled( false );
-			
+			setUIActivityState( false );
+
 			mScanner.kill();
 			updateTimer.stop();
 		}
 		else if( "timer_update".equals( e.getActionCommand() ) )
 		{
 			updateOutputText();
+			
+			if( mScanner.getIsFinished() )
+			{
+				setUIActivityState( false );
+			}
 		}
 	}
 	
-	public void updateOutputText()
+	/*
+	 * Set UI Button state
+	 */
+	private void setUIActivityState( boolean inActive )
 	{
-		jTextScan.setText( mScanner.mOutput );	
+		if( inActive )
+		{
+			jButtonScan.setEnabled( false );
+			jFieldDir.setEnabled( false );
+			jButtonChoose.setEnabled( false );
+			jButtonStop.setEnabled( true );
+		}
+		else
+		{
+			jButtonScan.setEnabled( true );
+			jFieldDir.setEnabled( true );
+			jButtonChoose.setEnabled( true );
+			jButtonStop.setEnabled( false );
+		}
+	}
+	
+	/*
+	 * Update Scanner Text Field 
+	 */
+	private void updateOutputText()
+	{
+		jTextScan.setText( mScanner.getOutputText() );	
 	}
 	
 }

@@ -118,6 +118,8 @@ public class MP3 {
 				{
 					// Extract title (3 - 32)
 					mTitle = tag.substring(3, 32).replaceAll("[^\\p{ASCII}]", "");
+					mTitle = mTitle.replaceAll("\n", "");
+					mTitle = mTitle.replaceAll("\r", "");
 					mTitle = mTitle.replaceAll( "[\"]", "" );
 					int end_idx = mTitle.indexOf( 0 ); 
 					if( end_idx >= 0 )	
@@ -127,6 +129,9 @@ public class MP3 {
 					
 					// Extract artist (33, 62)
 					mArtist = tag.substring(33, 62).replaceAll("[^\\p{ASCII}]", "");
+					mArtist = mArtist.replaceAll("\n", "");
+					mArtist = mArtist.replaceAll("\r", "");
+					mTitle = mTitle.replaceAll( "[\"]", "" );
 					end_idx = mArtist.indexOf( 0 );
 					if( end_idx >= 0 )
 					{
